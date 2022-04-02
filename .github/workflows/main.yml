@@ -3,23 +3,25 @@ name: Daily report
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 17 * * *"
-
-env:
-  TZ: 'Asia/Shanghai'
+    - cron: "0 6,16 * * *"
 
 jobs:
-
   build:
-    runs-on: windows-latest
-
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: '3.9'
-        architecture: 'x64'
-    - run: |
-        python -m pip install --upgrade pip
-        pip install requests
-        python main.py ${{ secrets.COOKIES }}
+      - name: Checkout
+        uses: actions/checkout@v2.4.0
+
+      - name: Setup Python
+        uses: actions/setup-python@v2.3.2
+        with:
+          python-version: "3.10"
+          architecture: "x64"
+
+      - name: Install packages
+        run: pip install -r requirements.txt
+
+      - name: Run application
+        env:
+          COOKIES: ${{ secrets.COOKIES }}
+        run: python -u src/main.py
